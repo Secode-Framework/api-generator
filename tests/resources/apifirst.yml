@@ -1,0 +1,2108 @@
+openapi: 3.0.3
+info:
+  title: Gestion Se Colectiva
+  description: |-
+    App de gestión de clientes en Se.Colectiva
+
+    Some useful links:
+
+    - [The Pet Store
+    repository](https://github.com/swagger-api/swagger-petstore)
+
+    - [The source API definition for the Pet
+    Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  version: 1.0.11
+servers:
+  - url: https://gestion.secolectiva.com/des/api/v1
+  - url: https://gestion.secolectiva.com/pro/api/v1
+x-ver: v1
+tags:
+  - name: Auth
+    description: Todo lo relacionado a la authorización
+  - name: Perfil
+    description: CRUD de perfil del usuario
+  - name: User
+    description: CRUD de usuario
+  - name: Servidor
+    description: CRUD de servidor
+  - name: Aplicacion
+    description: CRUD de aplicaciones
+  - name: Empresa
+    description: CRUD de empresas
+  - name: Plan
+    description: CRUD de planes
+paths:
+  /login:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Auth
+      summary: Login
+      description: Login
+      operationId: login
+      requestBody:
+        description: Login
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        '200':
+          description: Logeo exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /registrar:
+    post:
+      x-middlewares:
+        - secode
+      x-controller-path: Admin
+      tags:
+        - Auth
+      summary: Registro de usuario
+      description: Registro de usuario
+      operationId: registrar
+      requestBody:
+        description: Registro de usuario
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        '200':
+          description: Se ha creado el usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /checkLogin:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Auth
+      summary: Verificar si el token es correcto
+      description: Verificar si el token es correcto
+      operationId: checkLogin
+      requestBody:
+        description: Verificar si el token es correcto
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        '200':
+          description: Se ha creado el usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /perfil:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Perfil
+      summary: Guardar un perfil
+      description: Guardar un perfil
+      operationId: savePerfil
+      requestBody:
+        description: Guardar un perfil
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Perfil'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Perfil'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: qqqq
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Perfil
+      summary: Listar perfiles no eliminados
+      description: Listar perfiles no eliminados
+      operationId: listPerfil
+      parameters:
+        - $ref: '#/parameters/Page'
+        - $ref: '#/parameters/PageSize'
+        - $ref: '#/parameters/SortDir'
+        - $ref: '#/parameters/SortCol'
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: qqqq
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /perfil/{id}:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Perfil
+      summary: Modificar un perfil existente
+      description: Modificar un perfil existente
+      operationId: updatePerfil
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del perfil
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Modificar un perfil existente
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Perfil'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Perfil'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: Ha ocurrido un error al modificar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Perfil
+      summary: Buscar un perfil existente
+      description: Buscar un perfil existente
+      operationId: findPerfil
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del perfil
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Perfil'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Perfil
+      summary: Eliminar un perfil existente
+      description: Eliminar un perfil existente
+      operationId: deletePerfil
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del perfil
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Perfil'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /perfil/activar/{id}:
+    put:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Perfil
+      summary: Activar un perfil existente
+      description: Activar un perfil existente
+      operationId: activarPerfil
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del perfil
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /perfil/desactivar/{id}:
+    put:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Perfil
+      summary: Activar un perfil existente
+      description: Activar un perfil existente
+      operationId: desactivarPerfil
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del perfil
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /user:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - User
+      summary: Guardar un Usuario
+      description: Guardar un Usuario
+      operationId: saveUser
+      requestBody:
+        description: Guardar un Usuario
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: qqqq
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - User
+      summary: Listar usuarios no eliminados
+      description: Listar usuarios no eliminados
+      operationId: listUser
+      parameters:
+        - $ref: '#/parameters/Page'
+        - $ref: '#/parameters/PageSize'
+        - $ref: '#/parameters/SortDir'
+        - $ref: '#/parameters/SortCol'
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PaginatorResponse'
+        '400':
+          description: qqqq
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /user/{id}:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - User
+      summary: Modificar un usuario existente
+      description: Modificar un usuario existente
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del usuario
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Modificar un usuario existente
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: Ha ocurrido un error al modificar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - User
+      summary: Buscar un usuario existente
+      description: Buscar un usuario existente
+      operationId: findUser
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del usuario
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - User
+      summary: Eliminar un usuario existente
+      description: Eliminar un usuario existente
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del usuario
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /user/activar/{id}:
+    put:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - User
+      summary: Activar un usuario existente
+      description: Activar un usuario existente
+      operationId: activarUser
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del usuario
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /user/desactivar/{id}:
+    put:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - User
+      summary: Desactivar un usuario existente
+      description: Desactivar un usuario existente
+      operationId: desactivarUser
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del usuario
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /servidor:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Servidor
+      summary: Guardar un Servidor
+      description: Guardar un Servidor
+      operationId: saveServidor
+      requestBody:
+        description: Guardar un Servidor
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Servidor'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Servidor'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: qqqq
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Servidor
+      summary: Listar servidores no eliminados
+      description: Listar servidores no eliminados
+      operationId: listServidor
+      parameters:
+        - $ref: '#/parameters/Page'
+        - $ref: '#/parameters/PageSize'
+        - $ref: '#/parameters/SortDir'
+        - $ref: '#/parameters/SortCol'
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PaginatorResponse'
+        '400':
+          description: qqqq
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /servidor/{id}:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Servidor
+      summary: Modificar un servidor existente
+      description: Modificar un servidor existente
+      operationId: updateServidor
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del servidor
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Modificar un servidor existente
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Servidor'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Servidor'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: Ha ocurrido un error al modificar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Servidor
+      summary: Buscar un servidor existente
+      description: Buscar un servidor existente
+      operationId: findServidor
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del servidor
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Servidor
+      summary: Eliminar un servidor existente
+      description: Eliminar un servidor existente
+      operationId: deleteServidor
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del servidor
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /servidor/activar/{id}:
+    put:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Servidor
+      summary: Activar un servidor existente
+      description: Activar un servidor existente
+      operationId: activarServidor
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del servidor
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /servidor/desactivar/{id}:
+    put:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Servidor
+      summary: Desactivar un servidor existente
+      description: Desactivar un servidor existente
+      operationId: desactivarServidor
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del servidor
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /aplicacion:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Aplicacion
+      summary: Guardar una Aplicacion
+      description: Guardar una Aplicacion
+      operationId: saveAplicacion
+      requestBody:
+        description: Guardar una Aplicacion
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Aplicacion'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Aplicacion'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: qqqq
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Aplicacion
+      summary: Listar aplicaciones no eliminados
+      description: Listar aplicaciones no eliminados
+      operationId: listAplicacion
+      parameters:
+        - $ref: '#/parameters/Page'
+        - $ref: '#/parameters/PageSize'
+        - $ref: '#/parameters/SortDir'
+        - $ref: '#/parameters/SortCol'
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PaginatorResponse'
+        '400':
+          description: qqqq
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /aplicacion/{id}:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Aplicacion
+      summary: Modificar una aplicacion existente
+      description: Modificar una aplicacion existente
+      operationId: updateAplicacion
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del aplicacion
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Modificar una aplicacion existente
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Aplicacion'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Aplicacion'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: Ha ocurrido un error al modificar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: No se ha encontrado el aplicacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Aplicacion
+      summary: Buscar una aplicacion existente
+      description: Buscar una aplicacion existente
+      operationId: findAplicacion
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único de la aplicacion
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el aplicacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Aplicacion
+      summary: Eliminar una aplicacion existente
+      description: Eliminar una aplicacion existente
+      operationId: deleteAplicacion
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único de la aplicacion
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el aplicacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /aplicacion/activar/{id}:
+    put:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Aplicacion
+      summary: Activar una aplicacion existente
+      description: Activar una aplicacion existente
+      operationId: activarAplicacion
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del aplicacion
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el aplicacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /aplicacion/desactivar/{id}:
+    put:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Aplicacion
+      summary: Desactivar una aplicacion existente
+      description: Desactivar una aplicacion existente
+      operationId: desactivarAplicacion
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del aplicacion
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el aplicacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /empresa:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Empresa
+      summary: Guardar una Empresa
+      description: Guardar una Empresa
+      operationId: saveEmpresa
+      requestBody:
+        description: Guardar una Empresa
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Empresa'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Empresa'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: qqqq
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Empresa
+      summary: Listar empresaes no eliminados
+      description: Listar empresaes no eliminados
+      operationId: listEmpresa
+      parameters:
+        - $ref: '#/parameters/Page'
+        - $ref: '#/parameters/PageSize'
+        - $ref: '#/parameters/SortDir'
+        - $ref: '#/parameters/SortCol'
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PaginatorResponse'
+        '400':
+          description: qqqq
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /empresa/{id}:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Empresa
+      summary: Modificar una empresa existente
+      description: Modificar una empresa existente
+      operationId: updateEmpresa
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del empresa
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Modificar una empresa existente
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Empresa'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Empresa'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: Ha ocurrido un error al modificar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: No se ha encontrado el empresa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Empresa
+      summary: Buscar una empresa existente
+      description: Buscar una empresa existente
+      operationId: findEmpresa
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único de la empresa
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el empresa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Empresa
+      summary: Eliminar una empresa existente
+      description: Eliminar una empresa existente
+      operationId: deleteEmpresa
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único de la empresa
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el empresa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /empresa/activar/{id}:
+    put:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Empresa
+      summary: Activar una empresa existente
+      description: Activar una empresa existente
+      operationId: activarEmpresa
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del empresa
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el empresa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /empresa/desactivar/{id}:
+    put:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Empresa
+      summary: Desactivar una empresa existente
+      description: Desactivar una empresa existente
+      operationId: desactivarEmpresa
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del empresa
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el empresa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /empresa/asignarPlan:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Empresa
+      summary: Asignar un plan a la empresa
+      description: Asignación de un plan a la empresa
+      operationId: savePlanEmpresa
+      requestBody:
+        description: Asignar un plan
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                planId:
+                  type: integer
+                  format: int32
+                  example: 1
+                empresaId:
+                  type: integer
+                  format: int32
+                  example: 1
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el empresa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /plan:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Plan
+      summary: Guardar un Plan
+      description: Guardar un Plan
+      operationId: savePlan
+      requestBody:
+        description: Guardar un Plan
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/PlanRequest'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: qqqq
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Plan
+      summary: Listar planes no eliminados
+      description: Listar planes no eliminados
+      operationId: listPlan
+      parameters:
+        - $ref: '#/parameters/Page'
+        - $ref: '#/parameters/PageSize'
+        - $ref: '#/parameters/SortDir'
+        - $ref: '#/parameters/SortCol'
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PaginatorResponse'
+        '400':
+          description: qqqq
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /plan/{id}:
+    post:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Plan
+      summary: Modificar un planes existente
+      description: Modificar un planes existente
+      operationId: updatePlan
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del planes
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Modificar un planes existente
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/PlanRequest'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: Ha ocurrido un error al modificar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: No se ha encontrado el plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Plan
+      summary: Buscar un planes existente
+      description: Buscar un planes existente
+      operationId: findPlan
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del planes
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Plan
+      summary: Eliminar un planes existente
+      description: Eliminar un planes existente
+      operationId: deletePlan
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del planes
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /plan/activar/{id}:
+    put:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Plan
+      summary: Activar un planes existente
+      description: Activar un planes existente
+      operationId: activarPlan
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del planes
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /plan/desactivar/{id}:
+    put:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Plan
+      summary: Desactivar un planes existente
+      description: Desactivar un planes existente
+      operationId: desactivarPlan
+      parameters:
+        - name: id
+          in: path
+          description: Identificador único del planes
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+parameters:
+  Paginator:
+    - $ref: '#/parameters/Page'
+    - $ref: '#/parameters/PageSize'
+    - $ref: '#/parameters/SortDir'
+    - $ref: '#/parameters/SortCol'
+  Page:
+    in: query
+    name: page
+    schema:
+      type: integer
+      default: 1
+  PageSize:
+    in: query
+    name: pageSize
+    schema:
+      type: integer
+      default: 10
+  SortDir:
+    in: query
+    name: sortDir
+    schema:
+      type: string
+      enum:
+        - DESC
+        - ASC
+      default: DESC
+  SortCol:
+    in: query
+    name: sortCol
+    schema:
+      type: string
+components:
+  schemas:
+    PaginatorResponse:
+      x-api-generator-ignore: true
+      type: object
+      properties:
+        totalRows:
+          type: integer
+          format: int32
+          example: 15
+        lastPage:
+          type: integer
+          format: int32
+          example: 2
+        data:
+          type: array
+          items: { }
+    SuccessMessage:
+      x-api-generator-ignore: true
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          additionalProperties:
+            type: string
+            example: Token xdxd
+        message:
+          type: string
+          example: La operación se ha efectuado con éxito
+    ErrorMessage:
+      x-api-generator-ignore: true
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Ha ocurrido un error
+        error:
+          type: object
+          additionalProperties:
+            type: string
+            example: Este campo no ha sido ingresado
+    Permiso:
+      type: object
+      properties:
+        menuId:
+          type: integer
+          format: int64
+          example: 2
+    Perfil:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: admin
+        estado:
+          type: integer
+          format: int64
+          example: 2
+        permisos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permiso'
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: theUser
+        password:
+          type: string
+          example: thePassword
+        estado:
+          type: integer
+          format: int32
+          example: 2
+        perfilId:
+          type: integer
+          format: int64
+          example: 1
+    UserLogin:
+      type: object
+      properties:
+        username:
+          type: string
+          example: theUser
+        password:
+          type: string
+          example: thePassword
+    Empresa:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        direccion:
+          type: string
+          example: Av 26 de enero 782
+        email:
+          type: string
+          example: slickelpro@gmail.com
+        nombreComercial:
+          type: string
+          example: Slick el pro
+        razonSocial:
+          type: string
+          example: Slick el pro
+        ruc:
+          type: string
+          example: 10716961554
+        telefono:
+          type: string
+          example: +51 959825887
+        ubigeoId:
+          type: integer
+          format: int32
+          example: 15
+        representante:
+          $ref: '#/components/schemas/Representante'
+        servidorId:
+          type: integer
+          format: int32
+          example: 17
+    Representante:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        direccion:
+          type: string
+          example: Av 26 de enero 782
+        email:
+          type: string
+          example: slickelpro@gmail.com
+        estado:
+          type: integer
+          format: int32
+          example: Slick el pro
+        numeroDocumento:
+          type: string
+          example: 71696155
+        razonSocial:
+          type: string
+          example: Slick el pro
+        telefono:
+          type: string
+          example: +51 959825887
+        ubigeoId:
+          type: integer
+          format: int32
+          example: 15
+        representanteId:
+          type: integer
+          format: int32
+          example: 17
+    Servidor:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: horizonfoods
+        url:
+          type: string
+          example: https://horizonfoods.com.pe
+        ftpHost:
+          type: string
+          example: ftp.horizonfoods.com.pe
+        ftpUser:
+          type: string
+          example: developer
+        ftpPassword:
+          type: string
+          example: thePassword
+        ftpPort:
+          type: integer
+          format: int32
+          example: 21
+    Aplicacion:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Backend Ecommerce
+        codigo:
+          type: string
+          example: APPLAR-E
+        tipo:
+          type: integer
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+          default: 1
+        descripcion:
+          type: string
+          example: |-
+            Esta aplicación es el backend del ecommerce de Se.Colectiva
+    PlanRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Backend Ecommerce
+        codigo:
+          type: string
+          example: APPLAR-E
+        tipo:
+          type: integer
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+          default: 1
+        descripcion:
+          type: string
+          example: |-
+            Plan Ecommerce
+        aplicacionIds:
+          type: array
+          items:
+            type: integer
+    Plan:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Backend Ecommerce
+        codigo:
+          type: string
+          example: APPLAR-E
+        tipo:
+          type: integer
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+          default: 1
+        descripcion:
+          type: string
+          example: |-
+            Plan Ecommerce
+        aplicaciones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Aplicacion'
