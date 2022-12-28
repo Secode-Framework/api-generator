@@ -1,5 +1,5 @@
 {
-    "name": "secode-framework/api-generator",
+    "name": "secode-framework/apifirst-generator",
     "description": "The Secode Framework.",
     "keywords": ["framework", "laravel","secode"],
     "license": "MIT",
