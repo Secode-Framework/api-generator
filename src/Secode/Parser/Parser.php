@@ -142,7 +142,7 @@ class Parser
                 $namespace = 'App\Http\Controllers\\' . $endPoints['x-controller-path'];
                 $controllerName = $endPoints['tags'][0] . 'Controller';
                 $operationId = $endPoints['operationId'];
-                $middlewares = $endPoints['x-middlewares'];
+                $middlewares = $endPoints['x-middlewares'] ?? [];
                 $newArray[$prefijoGrupal][$pathSinPrefijo][] = [
                     'method' => $method,
                     'action' => $namespace . "\\$controllerName"."Impl@$operationId",
