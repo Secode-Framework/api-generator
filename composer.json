@@ -5,8 +5,8 @@
     "license": "MIT",
     "homepage": "https://www.secode.com",
     "support": {
-        "issues": "https://github.com/Secode-Framework/apifirst-generator/issues",
-        "source": "https://github.com/Secode-Framework/apifirst-generator"
+        "issues": "https://github.com/Secode-Framework/api-generator/issues",
+        "source": "https://github.com/Secode-Framework/api-generator"
     },
     "authors": [
         {
