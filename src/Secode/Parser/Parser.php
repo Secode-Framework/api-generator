@@ -5,7 +5,6 @@ namespace Secode\Parser;
 use Nette\PhpGenerator\PhpFile;
 use Symfony\Component\Yaml\Parser as YamlParser;
 use Symfony\Component\Yaml\Yaml;
-use function PHPUnit\Framework\assertDirectoryDoesNotExist;
 
 class Parser
 {
@@ -151,9 +150,9 @@ class Parser
                 ];
                 //obtener args
 
-                $controllersInterfaces[$namespace][$controllerName][] = [
+                $controllersInterfaces[$namespace][$endPoints['x-controller-path']][$controllerName][] = [
                     'method' => $operationId,
-                    'args' => self::getArgumentsFromPath($keyPath),
+                    'args' => self::getArgumentsFromPath($keyPath)
                 ];
             }
         }
@@ -227,20 +226,22 @@ class Parser
 
     public function generarControllers($controllersInterfaces): void
     {
-        foreach ($controllersInterfaces as $nameNamespace => $interfaces) {
-            foreach ($interfaces as $nameInterface => $methods) {
-                $file = new PhpFile;
-                $file->addComment('This file is auto-generated.');
-                $file->setStrictTypes();
-                $namespace = $file->addNamespace($nameNamespace);
-                $interface = $namespace->addInterface($nameInterface);
-                foreach ($methods as $method) {
-                    $interfaceMethod = $interface->addMethod($method['method']);
-                    foreach ($method['args'] as $argument) {
-                        $interfaceMethod->addParameter($argument);
+        foreach ($controllersInterfaces as $nameNamespace => $directories) {
+            foreach ($directories as $directory => $interfaces) {
+                foreach ($interfaces as $nameInterface => $methods) {
+                    $file = new PhpFile;
+                    $file->addComment('This file is auto-generated.');
+                    $file->setStrictTypes();
+                    $namespace = $file->addNamespace($nameNamespace);
+                    $interface = $namespace->addInterface($nameInterface);
+                    foreach ($methods as $method) {
+                        $interfaceMethod = $interface->addMethod($method['method']);
+                        foreach ($method['args'] as $argument) {
+                            $interfaceMethod->addParameter($argument);
+                        }
                     }
+                    file_put_contents("$this->controllerInterfacePath/$directory/$nameInterface.php", $file);
                 }
-                file_put_contents("$this->controllerInterfacePath/$nameInterface.php", $file);
             }
         }
 
