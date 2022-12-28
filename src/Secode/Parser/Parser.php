@@ -145,7 +145,7 @@ class Parser
                 $middlewares = $endPoints['x-middlewares'];
                 $newArray[$prefijoGrupal][$pathSinPrefijo][] = [
                     'method' => $method,
-                    'action' => $namespace . "\\$controllerName@$operationId",
+                    'action' => $namespace . "\\$controllerName"."Impl@$operationId",
                     'middlewares' => $middlewares
                 ];
                 //obtener args
