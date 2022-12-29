@@ -47,7 +47,7 @@ class Parser
             $file = new PhpFile;
             $file->addComment('This file is auto-generated.');
             $file->setStrictTypes();
-            $nameNamespace = 'App\\Mapper';
+            $nameNamespace = 'App\\Dto';
             $namespace = $file->addNamespace($nameNamespace);
             $class = $namespace->addClass($className);
             foreach ($component['properties'] as $keyProperty => $property) {
