@@ -60,6 +60,7 @@ class Parser
                     ->setNullable();
                 $class->addMethod('get' . self::toClassName($keyProperty))
                     ->setReturnType($type)
+                    ->setReturnNullable()
                     ->setBody('return $this->' . $keyProperty . ';');
                 $class->addMethod('set' . self::toClassName($keyProperty))
                     ->setReturnType("self")
