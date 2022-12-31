@@ -56,17 +56,19 @@ class Parser
 
                 $class->addProperty($keyProperty)
                     ->setPrivate()
-                    ->setType($type);
+                    ->setType($type)
+                    ->setNullable();
                 $class->addMethod('get' . self::toClassName($keyProperty))
                     ->setReturnType($type)
                     ->setBody('return $this->' . $keyProperty . ';');
                 $class->addMethod('set' . self::toClassName($keyProperty))
-                    ->setReturnType($nameNamespace . '\\' . $className)
+                    ->setReturnType("self")
                     ->setBody(
                         '$this->' . $keyProperty . ' = $' . $keyProperty . ";\n" .
                         'return $this;')
                     ->addParameter($keyProperty)
-                    ->setType($type);
+                    ->setType($type)
+                    ->setNullable();
 
             }
             file_put_contents("$this->dtoClassPath/$className.php", $file);
