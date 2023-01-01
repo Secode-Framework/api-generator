@@ -149,7 +149,7 @@ class Parser
                 $middlewares = $endPoints['x-middlewares'] ?? [];
                 $newArray[$prefijoGrupal][$pathSinPrefijo][] = [
                     'method' => $method,
-                    'action' => $namespace . "\\$controllerName"."Impl@$operationId",
+                    'action' => $namespace . "\\$controllerName" . "Impl@$operationId",
                     'middlewares' => $middlewares
                 ];
                 //obtener args
@@ -239,7 +239,8 @@ class Parser
                     $namespace = $file->addNamespace($nameNamespace);
                     $interface = $namespace->addInterface($nameInterface);
                     foreach ($methods as $method) {
-                        $interfaceMethod = $interface->addMethod($method['method']);
+                        $interfaceMethod = $interface->addMethod($method['method'])
+                            ->setPublic();
                         foreach ($method['args'] as $argument) {
                             $interfaceMethod->addParameter($argument);
                         }
