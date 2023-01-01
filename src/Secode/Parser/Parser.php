@@ -57,7 +57,8 @@ class Parser
                 $class->addProperty($keyProperty)
                     ->setPrivate()
                     ->setType($type)
-                    ->setNullable();
+                    ->setNullable()
+                    ->setValue(null);
                 $class->addMethod('get' . self::toClassName($keyProperty))
                     ->setReturnType($type)
                     ->setReturnNullable()
