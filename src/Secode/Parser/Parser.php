@@ -50,6 +50,8 @@ class Parser
             $nameNamespace = 'App\\Dto';
             $namespace = $file->addNamespace($nameNamespace);
             $class = $namespace->addClass($className);
+
+            $properties = [];
             foreach ($component['properties'] as $keyProperty => $property) {
                 $type = array_key_exists('type', $property) ?
                     self::getDataType($property['type']) : $nameNamespace . '\\' . self::getDtoName($keyProperty);
@@ -72,7 +74,18 @@ class Parser
                     ->setType($type)
                     ->setNullable();
 
+                $properties[] = $keyProperty;
             }
+
+            $bodyToArrayMethod = "\n";
+            foreach ($properties as $property) {
+                $bodyToArrayMethod .= "\t'$property' => \$this->get" . self::toClassName($property) . "(),\n";
+            }
+            $class->addMethod('toArray')
+                ->setPublic()
+                ->setReturnType('array')
+                ->setBody("return [$bodyToArrayMethod];");
+
             file_put_contents("$this->dtoClassPath/$className.php", $file);
         }
     }
