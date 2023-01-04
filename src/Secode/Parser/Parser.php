@@ -196,14 +196,14 @@ class Parser
 
         $apiYaml['function'][0]['function'][0]['function'] = $functionYaml;
 
-        $ymlStr = Yaml::dump($apiYaml);
-        $ymlStr = str_replace(", ", ", \n", $ymlStr);
-        $ymlStr = str_replace("{ ", "{ \n", $ymlStr);
-        $ymlStr = str_replace("}, ", "\n }, ", $ymlStr);
-        $ymlStr = str_replace("], ", "\n ], ", $ymlStr);
-        $ymlStr = str_replace("} ", "\n } ", $ymlStr);
-        $ymlStr = str_replace("] ", "\n ] ", $ymlStr);
-        $ymlStr = str_replace("[", "[\n", $ymlStr);
+        $ymlStr = Yaml::dump($apiYaml, 20,2);
+//        $ymlStr = str_replace(", ", ", \n", $ymlStr);
+//        $ymlStr = str_replace("{ ", "{ \n", $ymlStr);
+//        $ymlStr = str_replace("}, ", "\n }, ", $ymlStr);
+//        $ymlStr = str_replace("], ", "\n ], ", $ymlStr);
+//        $ymlStr = str_replace("} ", "\n } ", $ymlStr);
+//        $ymlStr = str_replace("] ", "\n ] ", $ymlStr);
+//        $ymlStr = str_replace("[", "[\n", $ymlStr);
 
 
         file_put_contents($this->apiRoutesYmlPath . '/api-routes.yml', $ymlStr);
