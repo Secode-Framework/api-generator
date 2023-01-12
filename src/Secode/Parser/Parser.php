@@ -49,7 +49,9 @@ class Parser
             $file->setStrictTypes();
             $nameNamespace = 'App\\Dto';
             $namespace = $file->addNamespace($nameNamespace);
+            $namespace->addUse("JsonSerializable");
             $class = $namespace->addClass($className);
+            $class->addImplement("JsonSerializable");
 
             $properties = [];
             foreach ($component['properties'] as $keyProperty => $property) {
@@ -81,10 +83,16 @@ class Parser
             foreach ($properties as $property) {
                 $bodyToArrayMethod .= "\t'$property' => \$this->get" . self::toClassName($property) . "(),\n";
             }
+
             $class->addMethod('toArray')
                 ->setPublic()
                 ->setReturnType('array')
                 ->setBody("return [$bodyToArrayMethod];");
+
+            $class->addMethod('jsonSerialize')
+                ->setPublic()
+                ->setReturnType('array')
+                ->setBody('return $this->toArray();');
 
             file_put_contents("$this->dtoClassPath/$className.php", $file);
         }
@@ -197,14 +205,6 @@ class Parser
         $apiYaml['function'][0]['function'][0]['function'] = $functionYaml;
 
         $ymlStr = Yaml::dump($apiYaml, 20,2);
-//        $ymlStr = str_replace(", ", ", \n", $ymlStr);
-//        $ymlStr = str_replace("{ ", "{ \n", $ymlStr);
-//        $ymlStr = str_replace("}, ", "\n }, ", $ymlStr);
-//        $ymlStr = str_replace("], ", "\n ], ", $ymlStr);
-//        $ymlStr = str_replace("} ", "\n } ", $ymlStr);
-//        $ymlStr = str_replace("] ", "\n ] ", $ymlStr);
-//        $ymlStr = str_replace("[", "[\n", $ymlStr);
-
 
         file_put_contents($this->apiRoutesYmlPath . '/api-routes.yml', $ymlStr);
     }
