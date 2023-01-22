@@ -55,8 +55,14 @@ class Parser
 
             $properties = [];
             foreach ($component['properties'] as $keyProperty => $property) {
-                $type = array_key_exists('type', $property) ?
-                    self::getDataType($property['type']) : $nameNamespace . '\\' . self::getDtoName($keyProperty);
+                $type = "";
+                if (array_key_exists('type', $property)) {
+                    $type = self::getDataType($property['type']);
+                } else if (array_key_exists('$ref', $property)) {
+                    $type = $nameNamespace . '\\' . self::getSchemaName($property['$ref']);
+                } else {
+                    $type = $nameNamespace . '\\' . self::getDtoName($keyProperty);
+                }
 
                 $class->addProperty($keyProperty)
                     ->setPrivate()
@@ -204,7 +210,7 @@ class Parser
 
         $apiYaml['function'][0]['function'][0]['function'] = $functionYaml;
 
-        $ymlStr = Yaml::dump($apiYaml, 20,2);
+        $ymlStr = Yaml::dump($apiYaml, 20, 2);
 
         file_put_contents($this->apiRoutesYmlPath . '/api-routes.yml', $ymlStr);
     }
@@ -262,6 +268,11 @@ class Parser
                 }
             }
         }
+    }
+
+    public static function getSchemaName($ref)
+    {
+        return explode('/', $ref)[count(explode('/', $ref)) - 1] . 'DTO';
     }
 }
 
