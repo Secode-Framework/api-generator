@@ -120,7 +120,8 @@ class Parser
             'integer' => 'int',
             'string' => 'string',
             'boolean' => 'bool',
-            'array' => 'array'
+            'array' => 'array',
+            'number' => 'double'
         };
     }
 
