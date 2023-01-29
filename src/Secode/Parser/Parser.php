@@ -121,7 +121,7 @@ class Parser
             'string' => 'string',
             'boolean' => 'bool',
             'array' => 'array',
-            'number' => 'double'
+            'number' => 'float'
         };
     }
 
