@@ -57,7 +57,12 @@ class Parser
             foreach ($component['properties'] as $keyProperty => $property) {
                 $type = "";
                 if (array_key_exists('type', $property)) {
-                    $type = self::getDataType($property['type']);
+                    if (array_key_exists('format', $property)) {
+                        $type = self::getDataTypeByFormat($property['type'], $property['format']);
+                    } else {
+                        $type = self::getDataType($property['type']);
+                    }
+
                 } else if (array_key_exists('$ref', $property)) {
                     $type = $nameNamespace . '\\' . self::getSchemaName($property['$ref']);
                 } else {
@@ -123,6 +128,15 @@ class Parser
             'array' => 'array',
             'number' => 'float'
         };
+    }
+
+    public function getDataTypeByFormat(string $dataType, string $format): string
+    {
+        if ($format == 'binary') {
+            return "mixed";
+        } else {
+            return $this->getDataType($dataType);
+        }
     }
 
     public function generarApiRoutes($object): void
