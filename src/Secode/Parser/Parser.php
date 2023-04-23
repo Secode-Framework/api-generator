@@ -11,6 +11,12 @@ class Parser
     private string $controllerInterfacePath = "";
     private string $dtoClassPath = "";
     private string $apiRoutesYmlPath = "";
+    private string $controllerNamespace = "";
+
+    public function setControllerNamespace(string $controllerNamespace): void
+    {
+        $this->controllerNamespace = $controllerNamespace;
+    }
 
     public function setControllerInterfacePath(string $controllerInterfacePath): void
     {
@@ -185,13 +191,13 @@ class Parser
             $pathSinPrefijo = self::getPathSinPrefijo($keyPath);
             foreach ($path as $method => $endPoints) {
 
-                $namespace = 'App\Http\Controllers\\' . $endPoints['x-controller-path'];
+                $namespace = $this->controllerNamespace . "\\" . $endPoints['x-controller-path'];
                 $controllerName = $endPoints['tags'][0] . 'Controller';
                 $operationId = $endPoints['operationId'];
                 $middlewares = $endPoints['x-middlewares'] ?? [];
                 $newArray[$prefijoGrupal][$pathSinPrefijo][] = [
                     'method' => $method,
-                    'action' => $namespace . "\\$controllerName" . "Impl@$operationId",
+                    'action' => $namespace . "\\$controllerName" . "@$operationId",
                     'middlewares' => $middlewares
                 ];
                 //obtener args
