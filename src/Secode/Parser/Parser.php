@@ -10,6 +10,7 @@ class Parser
 {
     private string $controllerInterfacePath = "";
     private string $dtoClassPath = "";
+    private string $dtoNamespace = "";
     private string $apiRoutesYmlPath = "";
     private string $controllerNamespace = "";
 
@@ -27,6 +28,13 @@ class Parser
     {
         $this->dtoClassPath = $dtoClassPath;
     }
+
+    public function setDtoNamespace(string $dtoNamespace): void
+    {
+        $this->dtoNamespace = $dtoNamespace;
+    }
+
+
 
     public function setApiRoutesYmlPath($apiRoutesYmlPath): void
     {
@@ -53,7 +61,7 @@ class Parser
             $file = new PhpFile;
             $file->addComment('This file is auto-generated.');
             $file->setStrictTypes();
-            $nameNamespace = 'App\\Dto';
+            $nameNamespace = $this->dtoNamespace;
             $namespace = $file->addNamespace($nameNamespace);
             $namespace->addUse("JsonSerializable");
             $class = $namespace->addClass($className);
