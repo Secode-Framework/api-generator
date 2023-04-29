@@ -35,7 +35,6 @@ class Parser
     }
 
 
-
     public function setApiRoutesYmlPath($apiRoutesYmlPath): void
     {
         $this->apiRoutesYmlPath = $apiRoutesYmlPath;
@@ -108,6 +107,20 @@ class Parser
             foreach ($properties as $property) {
                 $bodyToArrayMethod .= "\t'$property' => \$this->get" . self::toClassName($property) . "(),\n";
             }
+
+            $bodyFromArrayMethod = "\t return (new $className())";
+            foreach ($properties as $property) {
+                $bodyFromArrayMethod .= "\n\t->set" . self::toClassName($property) . "(\$array['$property'] ?? null)";
+            }
+
+            $class->addMethod('fromArray')
+                ->setStatic()
+                ->setPublic()
+                ->setReturnType("self")
+                ->setBody("$bodyFromArrayMethod;")
+                ->addParameter("array")
+                ->setType("array")
+                ->setDefaultValue([]);
 
             $class->addMethod('toArray')
                 ->setPublic()

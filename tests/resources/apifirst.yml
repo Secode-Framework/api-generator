@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: Gestion Se Colectiva
+  title: Api Rest Se Colectiva
   description: |-
-    App de gestión de clientes en Se.Colectiva
+    Api rest del ERP de Se Colectiva
 
     Some useful links:
 
@@ -19,6 +19,8 @@ x-ver: v1
 tags:
   - name: Auth
     description: Todo lo relacionado a la authorización
+  - name: Menu
+    description: Menus de authorization
   - name: Perfil
     description: CRUD de perfil del usuario
   - name: User
@@ -31,11 +33,17 @@ tags:
     description: CRUD de empresas
   - name: Plan
     description: CRUD de planes
+  - name: ServidorAplicacion
+    description: CRUD de servidor aplicación
+  - name: Sunat
+    description: Temas referidos la sunat, como búsqueda por dni o ruc, etc.
+  - name: Registro
+    description: Registro de un usuario al ERP
+  - name: Login
+    description: Login de un usuario al ERP
 paths:
   /login:
     post:
-      x-middlewares:
-        - auth:sanctum
       x-controller-path: Admin
       tags:
         - Auth
@@ -149,10 +157,59 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
+  /menu:
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Menu
+      summary: Listar los menus del usuario
+      description: Listar los menus del usuario
+      operationId: listMenu
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Menu'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Menu'
+  /menu/all:
+    get:
+      x-middlewares:
+        - auth:sanctum
+      x-controller-path: Admin
+      tags:
+        - Menu
+      summary: Listar los menus del usuario
+      description: Listar los menus del usuario
+      operationId: listAllMenu
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Menu'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Menu'
   /perfil:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Perfil
       x-controller-path: Admin
       tags:
         - Perfil
@@ -164,10 +221,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Perfil'
+              $ref: '#/components/schemas/PerfilRequest'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Perfil'
+              $ref: '#/components/schemas/PerfilRequest'
         required: true
       responses:
         '200':
@@ -191,6 +248,7 @@ paths:
     get:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Perfil
       x-controller-path: Admin
       tags:
         - Perfil
@@ -198,20 +256,20 @@ paths:
       description: Listar perfiles no eliminados
       operationId: listPerfil
       parameters:
-        - $ref: '#/parameters/Page'
-        - $ref: '#/parameters/PageSize'
-        - $ref: '#/parameters/SortDir'
-        - $ref: '#/parameters/SortCol'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/SortDir'
+        - $ref: '#/components/parameters/SortCol'
       responses:
         '200':
           description: Operación exitosa
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessMessage'
+                $ref: '#/components/schemas/PaginatorResponsePerfil'
             application/xml:
               schema:
-                $ref: '#/components/schemas/SuccessMessage'
+                $ref: '#/components/schemas/PaginatorResponsePerfil'
         '400':
           description: qqqq
           content:
@@ -225,6 +283,7 @@ paths:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Perfil
       x-controller-path: Admin
       tags:
         - Perfil
@@ -279,6 +338,7 @@ paths:
     get:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Perfil
       x-controller-path: Admin
       tags:
         - Perfil
@@ -311,6 +371,7 @@ paths:
     delete:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Perfil
       x-controller-path: Admin
       tags:
         - Perfil
@@ -340,10 +401,31 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
+  /perfil/activos:
+    get:
+      x-middlewares:
+        - auth:sanctum
+        - hasMenu:Perfil
+      x-controller-path: Admin
+      tags:
+        - Perfil
+      summary: Listar los perfiles que estén con estado activo
+      description: Listar los perfiles que estén con estado activo
+      operationId: listActivePerfil
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PerfilResponse'
   /perfil/activar/{id}:
     put:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Perfil
       x-controller-path: Admin
       tags:
         - Perfil
@@ -380,6 +462,7 @@ paths:
     put:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Perfil
       x-controller-path: Admin
       tags:
         - Perfil
@@ -416,6 +499,7 @@ paths:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:User
       x-controller-path: Admin
       tags:
         - User
@@ -427,10 +511,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
           application/xml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
         required: true
       responses:
         '200':
@@ -454,6 +538,7 @@ paths:
     get:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:User
       x-controller-path: Admin
       tags:
         - User
@@ -461,20 +546,20 @@ paths:
       description: Listar usuarios no eliminados
       operationId: listUser
       parameters:
-        - $ref: '#/parameters/Page'
-        - $ref: '#/parameters/PageSize'
-        - $ref: '#/parameters/SortDir'
-        - $ref: '#/parameters/SortCol'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/SortDir'
+        - $ref: '#/components/parameters/SortCol'
       responses:
         '200':
           description: Operación exitosa
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatorResponse'
+                $ref: '#/components/schemas/PaginatorResponseUser'
             application/xml:
               schema:
-                $ref: '#/components/schemas/PaginatorResponse'
+                $ref: '#/components/schemas/PaginatorResponseUser'
         '400':
           description: qqqq
           content:
@@ -488,6 +573,7 @@ paths:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:User
       x-controller-path: Admin
       tags:
         - User
@@ -506,10 +592,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
           application/xml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
         required: true
       responses:
         '200':
@@ -542,6 +628,7 @@ paths:
     get:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:User
       x-controller-path: Admin
       tags:
         - User
@@ -577,6 +664,7 @@ paths:
     delete:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:User
       x-controller-path: Admin
       tags:
         - User
@@ -613,6 +701,7 @@ paths:
     put:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:User
       x-controller-path: Admin
       tags:
         - User
@@ -649,6 +738,7 @@ paths:
     put:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:User
       x-controller-path: Admin
       tags:
         - User
@@ -685,6 +775,7 @@ paths:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Servidor
       x-controller-path: Admin
       tags:
         - Servidor
@@ -696,10 +787,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Servidor'
+              $ref: '#/components/schemas/ServidorRequest'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Servidor'
+              $ref: '#/components/schemas/ServidorRequest'
         required: true
       responses:
         '200':
@@ -723,6 +814,7 @@ paths:
     get:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Servidor
       x-controller-path: Admin
       tags:
         - Servidor
@@ -730,20 +822,20 @@ paths:
       description: Listar servidores no eliminados
       operationId: listServidor
       parameters:
-        - $ref: '#/parameters/Page'
-        - $ref: '#/parameters/PageSize'
-        - $ref: '#/parameters/SortDir'
-        - $ref: '#/parameters/SortCol'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/SortDir'
+        - $ref: '#/components/parameters/SortCol'
       responses:
         '200':
           description: Operación exitosa
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatorResponse'
+                $ref: '#/components/schemas/PaginatorResponseServidor'
             application/xml:
               schema:
-                $ref: '#/components/schemas/PaginatorResponse'
+                $ref: '#/components/schemas/PaginatorResponseServidor'
         '400':
           description: qqqq
           content:
@@ -757,6 +849,7 @@ paths:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Servidor
       x-controller-path: Admin
       tags:
         - Servidor
@@ -775,10 +868,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Servidor'
+              $ref: '#/components/schemas/ServidorRequest'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Servidor'
+              $ref: '#/components/schemas/ServidorRequest'
         required: true
       responses:
         '200':
@@ -811,6 +904,7 @@ paths:
     get:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Servidor
       x-controller-path: Admin
       tags:
         - Servidor
@@ -830,10 +924,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessMessage'
+                $ref: '#/components/schemas/ServidorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/SuccessMessage'
+                $ref: '#/components/schemas/ServidorResponse'
         '404':
           description: No se ha encontrado el perfil
           content:
@@ -846,6 +940,7 @@ paths:
     delete:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Servidor
       x-controller-path: Admin
       tags:
         - Servidor
@@ -882,6 +977,7 @@ paths:
     put:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Servidor
       x-controller-path: Admin
       tags:
         - Servidor
@@ -918,6 +1014,7 @@ paths:
     put:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Servidor
       x-controller-path: Admin
       tags:
         - Servidor
@@ -950,10 +1047,206 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
+  /servidor/aplicacion:
+    get:
+      x-middlewares:
+        - auth:sanctum
+        - hasMenu:Servidor
+      x-controller-path: Admin
+      tags:
+        - ServidorAplicacion
+      summary: Listar aplicaciones de un servidor
+      description: Listar aplicaciones de un servidor
+      operationId: listServidorAplicacion
+      parameters:
+        - name: idServidor
+          in: query
+          description: Identificador único del servidor
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatorResponseServidorAplicacion'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PaginatorResponseServidorAplicacion'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    post:
+      x-middlewares:
+        - auth:sanctum
+        - hasMenu:Servidor
+      x-controller-path: Admin
+      tags:
+        - ServidorAplicacion
+      summary: Agregar una aplicación a un servidor
+      description: Agregar una aplicación a un servidor
+      operationId: saveServidorAplicacion
+      requestBody:
+        description: Agregar una aplicación a un servidor
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServidorAplicacionRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ServidorAplicacionRequest'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /servidor/aplicacion/{idServidorAplicacion}:
+    get:
+      x-middlewares:
+        - auth:sanctum
+        - hasMenu:Servidor
+      x-controller-path: Admin
+      tags:
+        - ServidorAplicacion
+      summary: Buscar un Servidor Aplicación
+      description: Buscar un Servidor Aplicación
+      operationId: findServidorAplicacion
+      parameters:
+        - name: idServidorAplicacion
+          in: path
+          description: Buscar un Servidor Aplicación
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServidorAplicacionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ServidorAplicacionResponse'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    post:
+      x-middlewares:
+        - auth:sanctum
+        - hasMenu:Servidor
+      x-controller-path: Admin
+      tags:
+        - ServidorAplicacion
+      summary: Modificar un Servidor Aplicación
+      description: Modificar un Servidor Aplicación
+      operationId: updateServidorAplicacion
+      parameters:
+        - name: idServidorAplicacion
+          in: path
+          description: Modificar un Servidor Aplicación
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Modificar una Servidor Aplicación
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServidorAplicacionRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ServidorAplicacionRequest'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      x-middlewares:
+        - auth:sanctum
+        - hasMenu:Servidor
+      x-controller-path: Admin
+      tags:
+        - ServidorAplicacion
+      summary: Eliminar un Servidor Aplicación
+      description: Eliminar un Servidor Aplicación
+      operationId: deleteServidorAplicacion
+      parameters:
+        - name: idServidorAplicacion
+          in: path
+          description: Eliminar un Servidor Aplicación
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          description: No se ha encontrado el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
   /aplicacion:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Aplicacion
       x-controller-path: Admin
       tags:
         - Aplicacion
@@ -965,10 +1258,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Aplicacion'
+              $ref: '#/components/schemas/AplicacionRequest'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Aplicacion'
+              $ref: '#/components/schemas/AplicacionRequest'
         required: true
       responses:
         '200':
@@ -992,6 +1285,7 @@ paths:
     get:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Aplicacion
       x-controller-path: Admin
       tags:
         - Aplicacion
@@ -999,20 +1293,20 @@ paths:
       description: Listar aplicaciones no eliminados
       operationId: listAplicacion
       parameters:
-        - $ref: '#/parameters/Page'
-        - $ref: '#/parameters/PageSize'
-        - $ref: '#/parameters/SortDir'
-        - $ref: '#/parameters/SortCol'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/SortDir'
+        - $ref: '#/components/parameters/SortCol'
       responses:
         '200':
           description: Operación exitosa
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatorResponse'
+                $ref: '#/components/schemas/PaginatorResponseAplicacion'
             application/xml:
               schema:
-                $ref: '#/components/schemas/PaginatorResponse'
+                $ref: '#/components/schemas/PaginatorResponseAplicacion'
         '400':
           description: qqqq
           content:
@@ -1026,6 +1320,7 @@ paths:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Aplicacion
       x-controller-path: Admin
       tags:
         - Aplicacion
@@ -1044,10 +1339,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Aplicacion'
+              $ref: '#/components/schemas/AplicacionRequest'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Aplicacion'
+              $ref: '#/components/schemas/AplicacionRequest'
         required: true
       responses:
         '200':
@@ -1080,6 +1375,7 @@ paths:
     get:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Aplicacion
       x-controller-path: Admin
       tags:
         - Aplicacion
@@ -1099,10 +1395,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessMessage'
+                $ref: '#/components/schemas/AplicacionResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/SuccessMessage'
+                $ref: '#/components/schemas/AplicacionResponse'
         '404':
           description: No se ha encontrado el aplicacion
           content:
@@ -1115,6 +1411,7 @@ paths:
     delete:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Aplicacion
       x-controller-path: Admin
       tags:
         - Aplicacion
@@ -1151,6 +1448,7 @@ paths:
     put:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Aplicacion
       x-controller-path: Admin
       tags:
         - Aplicacion
@@ -1187,6 +1485,7 @@ paths:
     put:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Aplicacion
       x-controller-path: Admin
       tags:
         - Aplicacion
@@ -1223,6 +1522,7 @@ paths:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Empresa
       x-controller-path: Admin
       tags:
         - Empresa
@@ -1261,6 +1561,7 @@ paths:
     get:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Empresa
       x-controller-path: Admin
       tags:
         - Empresa
@@ -1268,10 +1569,10 @@ paths:
       description: Listar empresaes no eliminados
       operationId: listEmpresa
       parameters:
-        - $ref: '#/parameters/Page'
-        - $ref: '#/parameters/PageSize'
-        - $ref: '#/parameters/SortDir'
-        - $ref: '#/parameters/SortCol'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/SortDir'
+        - $ref: '#/components/parameters/SortCol'
       responses:
         '200':
           description: Operación exitosa
@@ -1295,6 +1596,7 @@ paths:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Empresa
       x-controller-path: Admin
       tags:
         - Empresa
@@ -1349,6 +1651,7 @@ paths:
     get:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Empresa
       x-controller-path: Admin
       tags:
         - Empresa
@@ -1384,6 +1687,7 @@ paths:
     delete:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Empresa
       x-controller-path: Admin
       tags:
         - Empresa
@@ -1420,6 +1724,7 @@ paths:
     put:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Empresa
       x-controller-path: Admin
       tags:
         - Empresa
@@ -1456,6 +1761,7 @@ paths:
     put:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Empresa
       x-controller-path: Admin
       tags:
         - Empresa
@@ -1492,6 +1798,7 @@ paths:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Empresa
       x-controller-path: Admin
       tags:
         - Empresa
@@ -1537,6 +1844,7 @@ paths:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Plan
       x-controller-path: Admin
       tags:
         - Plan
@@ -1575,6 +1883,7 @@ paths:
     get:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Plan
       x-controller-path: Admin
       tags:
         - Plan
@@ -1582,10 +1891,10 @@ paths:
       description: Listar planes no eliminados
       operationId: listPlan
       parameters:
-        - $ref: '#/parameters/Page'
-        - $ref: '#/parameters/PageSize'
-        - $ref: '#/parameters/SortDir'
-        - $ref: '#/parameters/SortCol'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/SortDir'
+        - $ref: '#/components/parameters/SortCol'
       responses:
         '200':
           description: Operación exitosa
@@ -1609,6 +1918,7 @@ paths:
     post:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Plan
       x-controller-path: Admin
       tags:
         - Plan
@@ -1663,6 +1973,7 @@ paths:
     get:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Plan
       x-controller-path: Admin
       tags:
         - Plan
@@ -1698,6 +2009,7 @@ paths:
     delete:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Plan
       x-controller-path: Admin
       tags:
         - Plan
@@ -1734,6 +2046,7 @@ paths:
     put:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Plan
       x-controller-path: Admin
       tags:
         - Plan
@@ -1770,6 +2083,7 @@ paths:
     put:
       x-middlewares:
         - auth:sanctum
+        - hasMenu:Plan
       x-controller-path: Admin
       tags:
         - Plan
@@ -1802,40 +2116,305 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-parameters:
-  Paginator:
-    - $ref: '#/parameters/Page'
-    - $ref: '#/parameters/PageSize'
-    - $ref: '#/parameters/SortDir'
-    - $ref: '#/parameters/SortCol'
-  Page:
-    in: query
-    name: page
-    schema:
-      type: integer
-      default: 1
-  PageSize:
-    in: query
-    name: pageSize
-    schema:
-      type: integer
-      default: 10
-  SortDir:
-    in: query
-    name: sortDir
-    schema:
-      type: string
-      enum:
-        - DESC
-        - ASC
-      default: DESC
-  SortCol:
-    in: query
-    name: sortCol
-    schema:
-      type: string
+  /sunat/persona/dni:
+    get:
+      x-controller-path: User
+      tags:
+        - Sunat
+      summary: Búsqueda por dni
+      description: Buscar una persona por dni
+      operationId: findPersonaByDni
+      parameters:
+        - name: dni
+          in: query
+          description: Número del dni.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonaSunat'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PersonaSunat'
+        '400':
+          description: Bad params
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /sunat/empresa/ruc:
+    get:
+      x-controller-path: User
+      tags:
+        - Sunat
+      summary: Búsqueda por ruc
+      description: Buscar una empresa por número de ruc
+      operationId: findEmpresaByRuc
+      parameters:
+        - name: ruc
+          in: query
+          description: Número del ruc.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpresaSunat'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EmpresaSunat'
+        '400':
+          description: Bad params
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /registro/stepZero:
+    post:
+      x-controller-path: User
+      tags:
+        - Registro
+      summary: Formulario de registro del paso cero
+      description: Formulario de registro del paso cero
+      operationId: registroStepZero
+      requestBody:
+        description: Datos del registro del paso cero
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistroStepZero'
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageRegistro'
+        '400':
+          description: Ha ocurrido un error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /registro/stepOne:
+    post:
+      x-controller-path: User
+      tags:
+        - Registro
+      summary: Formulario de registro del paso uno
+      description: Formulario de registro del paso uno
+      operationId: registroStepOne
+      requestBody:
+        description: Datos del registro del paso uno
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistroStepOne'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageRegistro'
+        '400':
+          description: Ha ocurrido un error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /registro/stepTwo:
+    post:
+      x-controller-path: User
+      tags:
+        - Registro
+      summary: Formulario de registro del paso dos
+      description: Formulario de registro del paso dos
+      operationId: registroStepTwo
+      requestBody:
+        description: Datos del registro del paso dos
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistroStepTwo'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageRegistro'
+  /registro/stepThree:
+    post:
+      x-controller-path: User
+      tags:
+        - Registro
+      summary: Formulario de registro del paso tres
+      description: Formulario de registro del paso tres
+      operationId: registroStepThree
+      requestBody:
+        description: Datos del registro del paso tres
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistroStepThree'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageRegistro'
+  /registro/stepFour:
+    post:
+      x-controller-path: User
+      tags:
+        - Registro
+      summary: Formulario de registro del paso four
+      description: Formulario de registro del paso four
+      operationId: registroStepFour
+      requestBody:
+        description: Datos del registro del paso cuatro
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistroStepFour'
+        required: true
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageRegistro'
+
 components:
+  parameters:
+    Page:
+      in: query
+      name: page
+      schema:
+        type: integer
+        default: 1
+    PageSize:
+      in: query
+      name: pageSize
+      schema:
+        type: integer
+        default: 10
+    SortDir:
+      in: query
+      name: sortDir
+      schema:
+        type: string
+        enum:
+          - DESC
+          - ASC
+        default: DESC
+    SortCol:
+      in: query
+      name: sortCol
+      schema:
+        type: string
   schemas:
+    PaginatorResponsePerfil:
+      x-api-generator-ignore: true
+      type: object
+      properties:
+        totalRows:
+          type: integer
+          format: int32
+          example: 15
+        lastPage:
+          type: integer
+          format: int32
+          example: 2
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PerfilResponse'
+    PaginatorResponseUser:
+      x-api-generator-ignore: true
+      type: object
+      properties:
+        totalRows:
+          type: integer
+          format: int32
+          example: 15
+        lastPage:
+          type: integer
+          format: int32
+          example: 2
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResponse'
+    PaginatorResponseServidor:
+      x-api-generator-ignore: true
+      type: object
+      properties:
+        totalRows:
+          type: integer
+          format: int32
+          example: 15
+        lastPage:
+          type: integer
+          format: int32
+          example: 2
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServidorResponse'
+    PaginatorResponseAplicacion:
+      x-api-generator-ignore: true
+      type: object
+      properties:
+        totalRows:
+          type: integer
+          format: int32
+          example: 15
+        lastPage:
+          type: integer
+          format: int32
+          example: 2
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AplicacionResponse'
+    PaginatorResponseServidorAplicacion:
+      x-api-generator-ignore: true
+      type: object
+      properties:
+        totalRows:
+          type: integer
+          format: int32
+          example: 15
+        lastPage:
+          type: integer
+          format: int32
+          example: 2
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServidorAplicacionResponse'
     PaginatorResponse:
       x-api-generator-ignore: true
       type: object
@@ -1850,7 +2429,8 @@ components:
           example: 2
         data:
           type: array
-          items: { }
+          items:
+            $ref: '#/components/schemas/UserResponse'
     SuccessMessage:
       x-api-generator-ignore: true
       type: object
@@ -1881,6 +2461,45 @@ components:
           additionalProperties:
             type: string
             example: Este campo no ha sido ingresado
+    Menu:
+      type: object
+      properties:
+        menuTic:
+          type: integer
+          format: int64
+          example: 2
+        nombre:
+          type: string
+          example: Sistema
+        routes:
+          type: array
+          items:
+            type: string
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuChild"
+        icon:
+          type: string
+          format: int64
+          example: person
+    MenuChild:
+      type: object
+      properties:
+        menuTic:
+          type: integer
+          format: int64
+          example: 2
+        nombre:
+          type: string
+          example: Sistema
+        route:
+          type: string
+          example: /dashboard/perfil
+        icon:
+          type: string
+          format: int64
+          example: "person"
     Permiso:
       type: object
       properties:
@@ -1905,7 +2524,58 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Permiso'
-    User:
+    PerfilRequest:
+      type: object
+      properties:
+        nombre:
+          type: string
+          example: admin
+        estado:
+          type: integer
+          format: int64
+          example: 2
+        menuTics:
+          type: array
+          items:
+            type: integer
+          example: [1,2,3,4,5,6,7]
+    PerfilResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          example: admin
+        estado:
+          type: integer
+          format: int64
+          example: 2
+        menuTics:
+          type: array
+          items:
+            type: integer
+          example: [1,2,3,4,5,6,7]
+    UserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: theUser
+        password:
+          type: string
+          example: thePassword
+        estado:
+          type: integer
+          format: int32
+          example: 2
+        perfilId:
+          type: integer
+          format: int64
+          example: 1
+    UserResponse:
       type: object
       properties:
         id:
@@ -1940,6 +2610,12 @@ components:
         id:
           type: integer
           example: 1
+        tipoDocumento:
+          type: integer
+          example: 6
+        numeroDocumento:
+          type: string
+          example: 71696155
         direccion:
           type: string
           example: Av 26 de enero 782
@@ -2001,7 +2677,7 @@ components:
           type: integer
           format: int32
           example: 17
-    Servidor:
+    ServidorResponse:
       type: object
       properties:
         id:
@@ -2026,15 +2702,51 @@ components:
           type: integer
           format: int32
           example: 21
-    Aplicacion:
+        estado:
+          type: integer
+          format: int32
+          example: 1
+        esPrincipal:
+          type: boolean
+          example: true
+    ServidorRequest:
       type: object
       properties:
-        id:
+        nombre:
+          type: string
+          example: horizonfoods
+        url:
+          type: string
+          example: https://horizonfoods.com.pe
+        ftpHost:
+          type: string
+          example: ftp.horizonfoods.com.pe
+        ftpUser:
+          type: string
+          example: developer
+        ftpPassword:
+          type: string
+          example: thePassword
+        ftpPort:
           type: integer
+          format: int32
+          example: 21
+        estado:
+          type: integer
+          format: int32
           example: 1
+        esPrincipal:
+          type: boolean
+          example: true
+    AplicacionRequest:
+      type: object
+      properties:
         nombre:
           type: string
           example: Backend Ecommerce
+        repositorioUrl:
+          type: string
+          example: https://github.com
         codigo:
           type: string
           example: APPLAR-E
@@ -2046,10 +2758,87 @@ components:
             - 3
             - 4
           default: 1
+        estado:
+          type: integer
+          example: 1
         descripcion:
           type: string
           example: |-
             Esta aplicación es el backend del ecommerce de Se.Colectiva
+    AplicacionResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Backend Ecommerce
+        repositorioUrl:
+          type: string
+          example: https://github.com
+        codigo:
+          type: string
+          example: APPLAR-E
+        tipo:
+          type: integer
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+          default: 1
+        estado:
+          type: integer
+          example: 1
+        descripcion:
+          type: string
+          example: |-
+            Esta aplicación es el backend del ecommerce de Se.Colectiva
+    ServidorAplicacionRequest:
+      type: object
+      properties:
+        pathFtp:
+          type: string
+          example: /public_html/gestionbo/
+        endpoint:
+          type: string
+          example: https://gestionbo.secolectiva.com/pro/config-server
+        pathFtpDes:
+          type: string
+          example: /public_html/gestionbo/
+        endpointDes:
+          type: string
+          example: https://gestionbo.secolectiva.com/pro/config-server
+        aplicacionTic:
+          type: integer
+          example: 1
+        servidorTic:
+          type: integer
+          example: 1
+    ServidorAplicacionResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        pathFtp:
+          type: string
+          example: /public_html/gestionbo/
+        endpoint:
+          type: string
+          example: https://gestionbo.secolectiva.com/pro/config-server
+        pathFtpDes:
+          type: string
+          example: /public_html/gestionbo/
+        endpointDes:
+          type: string
+          example: https://gestionbo.secolectiva.com/pro/config-server
+        servidorTic:
+          type: integer
+          example: 1
+        aplicacion:
+          $ref: '#/components/schemas/AplicacionResponse'
     PlanRequest:
       type: object
       properties:
@@ -2058,23 +2847,21 @@ components:
           example: 1
         nombre:
           type: string
-          example: Backend Ecommerce
+          example: POS Simple
         codigo:
           type: string
-          example: APPLAR-E
+          example: POSS
         tipo:
           type: integer
           enum:
             - 1
             - 2
-            - 3
-            - 4
           default: 1
         descripcion:
           type: string
           example: |-
             Plan Ecommerce
-        aplicacionIds:
+        servidorAplicacionIds:
           type: array
           items:
             type: integer
@@ -2105,4 +2892,228 @@ components:
         aplicaciones:
           type: array
           items:
-            $ref: '#/components/schemas/Aplicacion'
+            $ref: '#/components/schemas/AplicacionRequest'
+    PersonaSunat:
+      type: object
+      properties:
+        dni:
+          type: string
+          example: "00000000"
+        nombres:
+          type: string
+          example: John
+        apellidoPaterno:
+          type: string
+          example: Doe
+        apellidoMaterno:
+          type: string
+          example: Doe
+        codVerifica:
+          type: string
+          example: "CODIGO_UNIQUE"
+    EmpresaSunat:
+      type: object
+      properties:
+        ruc:
+          type: string
+          example: 10101010101
+        razonSocial:
+          type: string
+          example: "Nombre Social"
+        nombreComercial:
+          type: string
+          example: "Nombre Comercial"
+        telefonos:
+          type: array
+          items:
+            type: string
+            example: "telefono"
+        tipo:
+          type: string
+          example: "tipo"
+        estado:
+          type: string
+          example: "estado"
+        condicion:
+          type: string
+          example: "condicion"
+        direccion:
+          type: string
+          example: "direccion"
+        departamento:
+          type: string
+          example: "departamento"
+        provincia:
+          type: string
+          example: "provincia"
+        distrito:
+          type: string
+          example: "distrito"
+        fechaInscripcion:
+          type: string
+          example: "fechaInscripcion"
+        sistEmsion:
+          type: string
+          example: "sistEmsion"
+        sistContabilidad:
+          type: string
+          example: "sistContabilidad"
+        actExterior:
+          type: string
+          example: "actExterior"
+        actEconomicas:
+          type: array
+          items:
+            type: string
+            example: "actEconomica"
+        cpPago:
+          type: array
+          items:
+            type: string
+            example: "cpPago"
+        sistElectronica:
+          type: array
+          items:
+            type: string
+            example: "sistElectronica"
+        fechaEmisorFe:
+          type: string
+          example: "fechaEmisorFe"
+        cpeElectronico:
+          type: array
+          items:
+            type: string
+            example: "cpeElectronico"
+        fechaPle:
+          type: string
+          example: "fechaPle"
+        padrones:
+          type: array
+          items:
+            type: string
+            example: "padrones"
+        fechaBaja:
+          type: string
+          example: "fechaBaja"
+        profesion:
+          type: string
+          example: "profesion"
+    SuccessMessageRegistro:
+      type: object
+      properties:
+        success:
+          type: integer
+          enum: [0,1,-1] #0 es falso, 1 es true, -1 es personalizado para este servicio.
+        data:
+          $ref: "#/components/schemas/RegistroStepZeroData"
+        message:
+          type: string
+          example: La operación se ha efectuado con éxito
+    RegistroStepZeroData:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "uniqueIdToken"
+        correo:
+          type: string
+          example: "correo@gmail.com"
+        tipoDocumentoId:
+          type: number
+          example: 6
+        numeroDocumento:
+          type: string
+          example: 12012012011
+        nombres:
+          type: string
+          example: John
+        apellidos:
+          type: string
+          example: Doe
+        razonSocial:
+          type: string
+          example: John Doe
+        planId:
+          type: number
+          example: 1
+        telefonoCodigoPais:
+          type: string
+          example: +51
+        telefono:
+          type: string
+          example: 999999999
+        actualStep:
+          type: integer
+          example: 1
+        uniqueId:
+          type: string
+          example: "myUniqueId"
+        usuario:
+          type: string
+          example: "mySuperUser"
+    RegistroStepZero:
+      type: object
+      properties:
+        correo:
+          type: string
+          example: "correo@gmail.com"
+    RegistroStepOne:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "uniqueIdToken"
+        tipoDocumentoId:
+          type: number
+          example: 6
+        numeroDocumento:
+          type: string
+          example: 12012012011
+        nombres:
+          type: string
+          example: John
+        apellidos:
+          type: string
+          example: Doe
+        razonSocial:
+          type: string
+          example: John Doe EIRL
+    RegistroStepTwo:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "uniqueIdToken"
+        planId:
+          type: number
+          example: 1
+        telefonoCodigoPais:
+          type: string
+          example: +51
+        telefono:
+          type: string
+          example: 999999999
+    RegistroStepThree:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "uniqueIdToken"
+        uniqueId:
+          type: string
+          example: "10716961554"
+        usuario:
+          type: string
+          example: "usuario"
+        contrasena:
+          type: string
+          example: "contrasena"
+        urlVerificar:
+          type: string
+          example: "localhost:8080/verificar/token"
+    RegistroStepFour:
+      type: object
+      properties:
+        tokenConfirmacion:
+          type: string
+          example: "tokenConfirmacion"
