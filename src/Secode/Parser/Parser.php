@@ -116,7 +116,7 @@ class Parser
                 $property = $propertyObj['propertyName'];
                 $propertyType = $propertyObj['typeForCast'];
                 $bodyFromArrayMethod .= "\n\t->set" . self::toClassName($property) .
-                    "($propertyType\$array['$property'] ?? null)";
+                    "($propertyType(\$array['$property'] ?? null))";
             }
 
             $class->addMethod('fromArray')
