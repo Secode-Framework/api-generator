@@ -68,15 +68,14 @@ class Parser
 
             $properties = [];
             foreach ($component['properties'] as $keyProperty => $property) {
-                $type = "";
+                $typeForCast = $type = "";
                 if (array_key_exists('type', $property)) {
                     if (array_key_exists('format', $property)) {
-                        $type = self::getDataTypeByFormat($property['type'], $property['format']);
+                        $typeForCast = $type = self::getDataTypeByFormat($property['type'], $property['format']);
                     } else {
-                        $type = self::getDataType($property['type']);
+                        $typeForCast = $type = self::getDataType($property['type']);
                     }
-
-                } else if (array_key_exists('$ref', $property)) {
+                } elseif (array_key_exists('$ref', $property)) {
                     $type = $nameNamespace . '\\' . self::getSchemaName($property['$ref']);
                 } else {
                     $type = $nameNamespace . '\\' . self::getDtoName($keyProperty);
@@ -100,17 +99,24 @@ class Parser
                     ->setType($type)
                     ->setNullable();
 
-                $properties[] = $keyProperty;
+                $properties[] = [
+                    "propertyName" => $keyProperty,
+                    "typeForCast" => $typeForCast !== "" ? "(" . $typeForCast . ")" : $typeForCast
+                ];
             }
 
             $bodyToArrayMethod = "\n";
-            foreach ($properties as $property) {
+            foreach ($properties as $propertyObj) {
+                $property = $propertyObj['propertyName'];
                 $bodyToArrayMethod .= "\t'$property' => \$this->get" . self::toClassName($property) . "(),\n";
             }
 
             $bodyFromArrayMethod = "\t return (new $className())";
-            foreach ($properties as $property) {
-                $bodyFromArrayMethod .= "\n\t->set" . self::toClassName($property) . "(\$array['$property'] ?? null)";
+            foreach ($properties as $propertyObj) {
+                $property = $propertyObj['propertyName'];
+                $propertyType = $propertyObj['typeForCast'];
+                $bodyFromArrayMethod .= "\n\t->set" . self::toClassName($property) .
+                    "($propertyType\$array['$property'] ?? null)";
             }
 
             $class->addMethod('fromArray')
